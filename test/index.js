@@ -351,6 +351,20 @@ describe('Metalsmith', function(){
       });
     });
 
+    it('should remove the existing destination directory if clean is true, except the given paths', function(done){
+      var m = Metalsmith('test/fixtures/write-clean-except');
+      m.except(['except.md']);
+      exec('mkdir -p test/fixtures/write-clean-except/build && touch test/fixtures/write-clean-except/build/empty.md && touch test/fixtures/write-clean-except/build/except.md', function(err){
+        if (err) return done(err);
+        var files = { 'index.md': { contents: new Buffer('body') }};
+        m.write(files, function(err){
+          if (err) return done(err);
+          equal('test/fixtures/write-clean-except/build', 'test/fixtures/write-clean-except/expected');
+          done();
+        });
+      });
+    });
+
     it('should chmod an optional mode from file metadata', function(done){
       var m = Metalsmith(fixture('write-mode'));
       var files = {
